@@ -40,3 +40,31 @@ export const signin = async (req, res, next) => {
 };
 
 
+export const google = async (res,req,next) =>{
+  try {
+    const user = await User.findOne({email:req.body.email})
+    if(user){
+      const token = jwt.sign({id: user._id}, process.env.OVERFLOW);
+      const{ password:pass , ...rest} = user._doc;
+      res
+      .cookie('access_token', token, { httpOnly: true })
+      .status(200)
+      .json(rest);
+    } else{
+      const generatedpassword = Math.random().toString(36).slice(-8)
+      const hashedPassword = bcryptjs.hashSync(generatedpassword,20);
+      const newUser = new User({username:req.body.name.split(" ").join("").toLowercase()+Math.random().toString(36).slice(-5),email:req.body.email,password:hashedPassword , avatar: req.body.photo});
+      await newUser.save();
+      const token = jwt.sign({id: newUser._id},process.env.OVERFLOW);
+      const { password:pass,...rest} = newUser._doc;
+      res
+      .cookie('access_token', token, { httpOnly: true })
+      .status(200)
+      .json(rest);
+    }
+
+    
+  } catch (error) {
+    
+  }
+}

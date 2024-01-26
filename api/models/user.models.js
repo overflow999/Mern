@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    avatar:{
+      type: String,
+      default:"https://img.freepik.com/premium-vector/young-man-avatar-character_24877-9475.jpg"
+
+    }
    
   },
   { timestamps: true }
